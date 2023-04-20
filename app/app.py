@@ -26,18 +26,18 @@ def create_app(db_url=None):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["PROPAGATE_EXCEPTIONS"] = True
     db.init_app(app)
-    api = Api(app)
     migrate = Migrate(app, db)
+    api = Api(app)
 
     app.config["JWT_SECRET_KEY"] = "jose"
     jwt = JWTManager(app)
 
-    @jwt.additional_claims_loader
-    def add_claims_to_jwt(identity):
-
-        if identity < 100:
-            return {"is_admin": True}
-        return {"is_admin": False}
+    # @jwt.additional_claims_loader
+    # def add_claims_to_jwt(identity):
+    #     # TODO: Read from a config file instead of hard-coding
+    #     if identity == 1:
+    #         return {"is_admin": True}
+    #     return {"is_admin": False}
 
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
@@ -92,12 +92,6 @@ def create_app(db_url=None):
             401,
         )
 
-    # JWT configuration ends
-
-    with app.app_context():
-        import models  # noqa: F401
-
-        db.create_all()
 
     api.register_blueprint(UserBlueprint)
     api.register_blueprint(ItemBlueprint)

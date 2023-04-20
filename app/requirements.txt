@@ -5,4 +5,4 @@ passlib
 marshmallow
 python-dotenv
 gunicorn
-flask-migrate
+Flask-Migrate
